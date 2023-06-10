@@ -3,12 +3,12 @@ server:
 
 spring:
   datasource:
-    master:
+    source:
       driver-class-name: com.mysql.cj.jdbc.Driver
       jdbc-url: jdbc:mysql://localhost:3307/orders
       username: root
       password: 1234
-    slave:
+    replica:
       driver-class-name: com.mysql.cj.jdbc.Driver
       jdbc-url: jdbc:mysql://localhost:3308/orders
       username: root
@@ -24,3 +24,9 @@ spring:
 
   main:
     allow-bean-definition-overriding: true
+
+logging:
+  level:
+    org:
+      hibernate:
+        type: trace

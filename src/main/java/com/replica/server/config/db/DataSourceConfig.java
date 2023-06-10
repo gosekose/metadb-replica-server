@@ -16,34 +16,34 @@ import java.util.HashMap;
 @Configuration
 public class DataSourceConfig {
 
-    private static final String MASTER_SERVER = "master";
-    private static final String SLAVE_SERVER = "slave";
+    private static final String SOURCE_SERVER = "source";
+    private static final String REPLICA_SERVER = "replica";
 
     @Bean
-    @Qualifier(MASTER_SERVER)
-    @ConfigurationProperties("spring.datasource.master")
+    @Qualifier(SOURCE_SERVER)
+    @ConfigurationProperties("spring.datasource.source")
     public DataSource masterDataSource() {
-        log.info("master register");
+        log.info("source register");
         return DataSourceBuilder.create().build();
     }
 
     @Bean
-    @Qualifier(SLAVE_SERVER)
-    @ConfigurationProperties("spring.datasource.slave")
-    public DataSource slaveDataSource() {
-        log.info("slave register");
+    @Qualifier(REPLICA_SERVER)
+    @ConfigurationProperties("spring.datasource.replica")
+    public DataSource replicaDataSource() {
+        log.info("replica register");
         return DataSourceBuilder.create().build();
     }
 
     @Bean
-    public DataSource routingDataSource(@Qualifier(MASTER_SERVER) DataSource masterDataSource,
-                                        @Qualifier(SLAVE_SERVER) DataSource slaveDataSource) {
+    public DataSource routingDataSource(@Qualifier(SOURCE_SERVER) DataSource masterDataSource,
+                                        @Qualifier(REPLICA_SERVER) DataSource slaveDataSource) {
 
         RoutingDataSource routingDataSource = new RoutingDataSource();
 
         HashMap<Object, Object> dataSourceMap = new HashMap<>();
-        dataSourceMap.put(MASTER_SERVER, masterDataSource);
-        dataSourceMap.put(SLAVE_SERVER, slaveDataSource);
+        dataSourceMap.put(SOURCE_SERVER, masterDataSource);
+        dataSourceMap.put(REPLICA_SERVER, slaveDataSource);
 
         routingDataSource.setTargetDataSources(dataSourceMap);
         routingDataSource.setDefaultTargetDataSource(masterDataSource);
@@ -54,7 +54,7 @@ public class DataSourceConfig {
     @Bean
     @Primary
     public DataSource dataSource() {
-        DataSource determinedDataSource = routingDataSource(masterDataSource(), slaveDataSource());
+        DataSource determinedDataSource = routingDataSource(masterDataSource(), replicaDataSource());
         return new LazyConnectionDataSourceProxy(determinedDataSource);
     }
 }
