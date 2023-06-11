@@ -8,19 +8,22 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.io.Serializable;
+
 @Entity
 @Getter
 @NoArgsConstructor
-public class Member {
+public class Member implements Serializable {
 
     @Id @GeneratedValue
     @Column(name = "member_id")
     private Long id;
 
     private String name;
-
+    private int age;
     @Builder
-    public Member(String name) {
+    public Member(String name, int age) {
         this.name = name;
+        this.age = age;
     }
 }
