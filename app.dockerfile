@@ -1,8 +1,8 @@
 # 빌드 스테이지
-FROM gradle:7.1.1-jdk17 AS build
+FROM gradle:8-jdk17 AS build
 WORKDIR /app
 COPY build.gradle .
-COPY gradle.properties .
+#COPY gradle.properties .
 COPY settings.gradle .
 COPY gradlew .
 COPY gradle ./gradle

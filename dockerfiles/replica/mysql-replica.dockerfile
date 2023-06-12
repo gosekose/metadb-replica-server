@@ -5,7 +5,7 @@ ENV MYSQL_DATABASE sample
 ENV MYSQL_USER user
 ENV MYSQL_PASSWORD password
 
-COPY my.cnf /etc/mysql/my.cnf
+COPY dockerfiles/replica/my.cnf /etc/mysql/my.cnf
 
 EXPOSE 3306
 

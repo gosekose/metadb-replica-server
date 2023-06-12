@@ -1,28 +1,34 @@
 version: '3'
 services:
   app:
-    build: ./dockerfiles/app
+    build:
+      context: .
+      dockerfile: app.dockerfile
     ports:
       - "8080:8080"
     depends_on:
-      - mysql-source
-      - mysql-replica
+      - order-source
+      - order-replica
       - redis
 
-  mysql-source:
-    build: ./dockerfiles/source
+  transcode-source:
+    build:
+      context: .
+      dockerfile: dockerfiles/source/mysql-source.dockerfile
     environment:
       MYSQL_ROOT_PASSWORD: 1234
       MYSQL_DATABASE: orders
     ports:
       - "3307:3306"
 
-  mysql-replica:
-    build: ./dockerfiles/replica
+  transcode-replica:
+    build:
+      context: .
+      dockerfile: dockerfiles/replica/mysql-replica.dockerfile
     environment:
       MYSQL_ROOT_PASSWORD: 1234
       MYSQL_DATABASE: orders
-    command: --replicate-do-db=orders --server-id=2 --relay-log-index=relay-log-index --relay-log=relay-log --master-host=mysql-source --master-user=root --master-password=1234 --master-connect-retry=60
+    command: --replicate-do-db=transcode --server-id=2 --relay-log-index=relay-log-index --relay-log=relay-log --master-host=order-source --master-user=root --master-password=1234 --master-connect-retry=60
     ports:
       - "3308:3306"
 
